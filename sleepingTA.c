@@ -79,16 +79,21 @@ int main(void)
 		{
 			printf("No student come.\n", allStudent);
 		}
-		//進來一次為一個單位時間
-		sleep(1);
+		//將每次學生來時間設為1毫秒
+		usleep(1000);
 	}
 
 	printf("Total waiting time = %d\n\n", waitTime);
 	double avgWaitTime;
+	double avgWaitTime_new;
 	//計算平均等待時間
 	avgWaitTime = (double)waitTime / waitingStudents;
-	printf("Avg waiting Time %lf\n", avgWaitTime);
-	printf("came studets number %d\n", allStudent);
+	avgWaitTime_new = (double)waitTime / allStudent;
+    //printf("Avg waiting Time %lf\n", avgWaitTime);
+	printf("Number of Came studets  %d\n", allStudent);
+	printf("Avg waiting Time %lf\n", avgWaitTime_new);
+	//printf("waitingStudents %d\n", waitingStudents);
+	
 
 	return 0;
 }
@@ -111,7 +116,7 @@ void *TA(void *temp)
 		printf("%s\n", "TA starts teaching.");
 
 		//TA教學一次要2個單位時間
-		sleep(2);
+		usleep(2000);
 
 		//總時間加2
 		waitTime += 2;
@@ -138,11 +143,11 @@ void *Student(void *temp)
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
 		waitTime += numOfChairs; //增加這個人總等待的時間
 		sem_post(&time_mutex);
-		sleep(1);
+		usleep(1000);
 		sem_wait(&time_mutex);
 		waitTime += numOfChairs;
 		sem_post(&time_mutex);
-		sleep(1);
+		usleep(1000);
 		printf("%s\n", "Finsh TA teaching, Student leave.");
 	}
 	else
