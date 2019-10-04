@@ -71,13 +71,13 @@ int main(void)
 		if (studentPerTime[i] != 0)
 		{
 			allStudent++;
-			printf("Student %d comes\n", allStudent);
+			printf("Student %d comes.\n", allStudent);
 			// pthread_create(id's pointer, thread之屬性, 處理函數之pointer, 帶入函數之參數)
 			pthread_create(&student_ids[i], NULL, Student, NULL);
 		}
 		else
 		{
-			printf("No student come\n", allStudent);
+			printf("No student come.\n", allStudent);
 		}
 		//進來一次為一個單位時間
 		sleep(1);
@@ -108,7 +108,7 @@ void *TA(void *temp)
 		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&TA_sem);		 // free TA
 
-		printf("%s\n", "TA start teaching");
+		printf("%s\n", "TA starts teaching.");
 
 		//TA教學一次要2個單位時間
 		sleep(2);
@@ -127,13 +127,13 @@ void *Student(void *temp)
 	// 不能坐超過10張椅子
 	if (numOfChairs < MAX_STUDENT_NUM)
 	{
-		printf("%s\n", "Student come and occupy a chair");
+		printf("%s\n", "Student come and occupy a chair.");
 		numOfChairs++;
 		waitingStudents++;
 		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&student_sem);  // free student
 		sem_wait(&TA_sem);		 // wait for barber available
-		printf("%s\n", "Student come in LAB");
+		printf("%s\n", "Student come in LAB.");
 		sem_wait(&time_mutex); //鎖住座椅
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
 		waitTime += numOfChairs; //增加這個人總等待的時間
@@ -143,11 +143,11 @@ void *Student(void *temp)
 		waitTime += numOfChairs;
 		sem_post(&time_mutex);
 		sleep(1);
-		printf("%s\n", "Finsh TA teaching, Student leave");
+		printf("%s\n", "Finsh TA teaching, Student leave.");
 	}
 	else
 	{
 		sem_post(&chairs_mutex); // unlock mutex
-		printf("%s\n", "No avaliable chair,Student leave");
+		printf("%s\n", "No avaliable chair,Student leave.");
 	}
 }
