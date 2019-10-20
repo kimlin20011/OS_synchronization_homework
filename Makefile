@@ -8,7 +8,7 @@ defult: all
 all: clean ST run
 
 ST:
-	gcc $(file).c -o $(file) -lm -lpthread
+	gcc $(file).c -o $(file) -lm -pthread
 
 run: ${file}
 	./${file} 

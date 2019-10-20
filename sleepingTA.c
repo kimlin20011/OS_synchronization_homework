@@ -1,6 +1,5 @@
-// gcc sleepingTA.c -lpthread -o sleepingTA
+// gcc sleepingTA.c -pthread -o sleepingTA
 // ./sleepingTA
-
 #include <stdio.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -12,7 +11,7 @@
 //- global param defination ------------------//
 int studentPerTime[100];			   // 每個單位時間點是否有學生來的情況 0：沒有學生來 1:有學生來
 int numOfChairs = 0;				   // 被佔據椅子初始值
-int waitTime = 0; // 總等待時間
+double waitTime = 0; // 總等待時間
 
 //設定旗標semaphore ={可不可以坐椅子（椅子鎖）， 學生的sem，TA的sem}
 sem_t chairs_mutex, time_mutex, student_sem, TA_sem;
@@ -79,17 +78,18 @@ int main(void)
 		{
 			printf("No student come.\n", allStudent);
 		}
-		//將每次學生來時間設為1毫秒
+		//將每次學生來的時間設為1毫秒
 		usleep(1000);
 	}
 
-	printf("Total waiting time = %d\n\n", waitTime);
+	printf("Total waiting time = %lf\n\n", waitTime);
 	double avgWaitTime_new;
 	//計算平均等待時間
-	avgWaitTime_new = (double)waitTime / allStudent;
+	avgWaitTime_new = waitTime / allStudent;
 	printf("Number of came studets  %d\n", allStudent);
 	printf("Avg waiting Time %lf\n", avgWaitTime_new);
 	
+
 	return 0;
 }
 
@@ -142,7 +142,7 @@ void *Student(void *temp)
 		waitTime += numOfChairs;
 		sem_post(&time_mutex);
 		usleep(1000);
-		printf("%s\n", "Finsh TA teaching, Student leave.");
+		printf("%s\n", "Finish TA teaching, Student leave.");
 	}
 	else
 	{
