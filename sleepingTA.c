@@ -51,7 +51,7 @@ int main(void)
 	//- initialize semaphores ----------------//
 	// 初始化旗標semaphore
 	// 第二個參數是指定是否要讓其他的行程（process）共用旗標
-	// 第三個參數則是設定旗標的初始值。
+	// 第三個參數則是設定semaphores的初始值。
 	// sem > 0
 	sem_init(&chairs_mutex, 0, 1); // 鎖，範圍：0-1
 	sem_init(&time_mutex, 0, 1);   // 時間鎖，最多1
@@ -83,10 +83,12 @@ int main(void)
 		usleep(1000);
 	}
 
+	usleep(500000);
+
 	printf("Total waiting time = %lf\n\n", waitTime);
 	double avgWaitTime_new;
 	//計算平均等待時間
-	avgWaitTime_new = waitTime / waitingStudents;
+	avgWaitTime_new = (waitTime+waitingStudents*2) / waitingStudents;
 	printf("Number of came studets  %d\n", allStudent);
 	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitTime_new);
@@ -114,8 +116,6 @@ void *TA(void *temp)
 
 		//TA教學一次要2個單位時間
 		usleep(2000);
-		//總時間加2
-		waitTime += 2;
 	}
 }
 
@@ -136,7 +136,7 @@ void *Student(void *temp)
 		sem_post(&student_sem);  // free student
 		sem_wait(&TA_sem);		 // wait for barber available
 		printf("%s\n", "Student come in LAB.");
-		sem_wait(&time_mutex); //鎖住座椅
+		sem_wait(&time_mutex); //lock time
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
 		waitTime += numOfChairs; //增加這個人總等待的時間
 		sem_post(&time_mutex);
