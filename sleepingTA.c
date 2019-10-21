@@ -13,12 +13,13 @@ int studentPerTime[100];			   // 每個單位時間點是否有學生來的情�
 int numOfChairs = 0;				   // 被佔據椅子初始值
 double waitTime = 0; // 總等待時間
 
-//設定旗標semaphore ={可不可以坐椅子（椅子鎖）， 學生的sem，TA的sem}
-sem_t chairs_mutex, time_mutex, student_sem, TA_sem;
+//設定旗標semaphore ={可不可以坐椅子（椅子mutex)， 時間mutex，學生的sem，TA的sem}
+sem_t chairs_mutex,time_mutex, student_sem, TA_sem;
 
 // 時間的flag
 int timeFlag = 0;
 int allStudent = 0;
+int waitingStudents = 0;  //真的有等待學生的人
 
 //- function prototype -----------------------//
 void *TA(void *temp);
@@ -76,7 +77,7 @@ int main(void)
 		}
 		else
 		{
-			printf("No student come.\n", allStudent);
+			printf("No student come.\n");
 		}
 		//將每次學生來的時間設為1毫秒
 		usleep(1000);
@@ -85,8 +86,9 @@ int main(void)
 	printf("Total waiting time = %lf\n\n", waitTime);
 	double avgWaitTime_new;
 	//計算平均等待時間
-	avgWaitTime_new = waitTime / allStudent;
+	avgWaitTime_new = waitTime / waitingStudents;
 	printf("Number of came studets  %d\n", allStudent);
+	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitTime_new);
 	
 
@@ -112,7 +114,6 @@ void *TA(void *temp)
 
 		//TA教學一次要2個單位時間
 		usleep(2000);
-
 		//總時間加2
 		waitTime += 2;
 	}
@@ -129,6 +130,8 @@ void *Student(void *temp)
 	{
 		printf("%s\n", "Student come and occupy a chair.");
 		numOfChairs++;
+		//真的有等待學生的人 +1；
+		waitingStudents++;
 		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&student_sem);  // free student
 		sem_wait(&TA_sem);		 // wait for barber available
