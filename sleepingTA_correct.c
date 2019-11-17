@@ -9,17 +9,17 @@
 #define MAX_STUDENT_NUM 10 //可使用椅子的最大數量
 
 //- global param defination ------------------//
-int studentPerTime[100];			   // 每個單位時間點是否有學生來的情況 0：沒有學生來 1:有學生來
-int numOfChairs = 0;				   // 被佔據椅子初始值
-double waitTime = 0; // 總等待時間
+int studentPerTime[100]; // 每個單位時間點是否有學生來的情況 0：沒有學生來 1:有學生來
+int numOfChairs = 0;	 // 被佔據椅子初始值
+double waitTime = 0;	 // 總等待時間
 
 //設定旗標semaphore ={可不可以坐椅子（椅子mutex)， 時間mutex，學生的sem，TA的sem}
-sem_t chairs_mutex,time_mutex, student_sem, TA_sem;
+sem_t chairs_mutex, time_mutex, student_sem, TA_sem;
 
 // 時間的flag
 int timeFlag = 0;
 int allStudent = 0;
-int waitingStudents = 0;  //真的有等待學生的人
+int waitingStudents = 0; //真的有等待學生的人
 
 //- function prototype -----------------------//
 void *TA(void *temp);
@@ -83,12 +83,12 @@ int main(void)
 		usleep(1000);
 	}
 
-	
-	for(int i = 0; i<100; i++){
+	for (int i = 0; i < 100; i++)
+	{
 		if (studentPerTime[i] != 0)
 		{
-		pthread_join(student_ids[i],NULL);
-		printf("student_ids[%d] thread complete\n",i);
+			pthread_join(student_ids[i], NULL);
+			printf("student_ids[%d] thread complete\n", i);
 		}
 	}
 
@@ -99,7 +99,6 @@ int main(void)
 	printf("Number of came studets  %d\n", allStudent);
 	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitTime_new);
-	
 
 	return 0;
 }
@@ -116,15 +115,13 @@ void *TA(void *temp)
 		numOfChairs--; //CS
 
 		//signal => sem ++
-		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&TA_sem);		 // free TA
+		sem_post(&chairs_mutex); // unlock mutex
 
 		printf("%s\n", "TA starts teaching.");
 
 		//TA教學一次要2個單位時間
 		usleep(2000);
-		
-		
 	}
 }
 
@@ -141,8 +138,8 @@ void *Student(void *temp)
 		numOfChairs++;
 		//真的有等待學生的人 +1；
 		waitingStudents++;
-		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&student_sem);  // free student
+		sem_post(&chairs_mutex); // unlock mutex
 		sem_wait(&TA_sem);		 // wait for barber available
 		printf("%s\n", "Student come in LAB.");
 		sem_wait(&time_mutex); //lock waitTime

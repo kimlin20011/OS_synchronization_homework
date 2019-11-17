@@ -51,7 +51,7 @@ int main(void)
 	//- initialize semaphores ----------------//
 	// 初始化旗標semaphore
 	// 第二個參數是指定是否要讓其他的行程（process）共用旗標
-	// 第三個參數則是設定semaphores的初始值。
+	// 第三個參數則是設定旗標的初始值。
 	// sem > 0
 	sem_init(&chairs_mutex, 0, 1); // 鎖，範圍：0-1
 	sem_init(&time_mutex, 0, 1);   // 時間鎖，最多1
@@ -83,12 +83,19 @@ int main(void)
 		usleep(1000);
 	}
 
-	usleep(500000);
+	//確認每個thread皆執行完成
+	for(int i = 0; i<100; i++){
+		if (studentPerTime[i] != 0)
+		{
+		pthread_join(student_ids[i],NULL);
+		printf("student_ids[%d] thread complete\n",i);
+		}
+	}
 
 	printf("Total waiting time = %lf\n\n", waitTime);
 	double avgWaitTime_new;
 	//計算平均等待時間
-	avgWaitTime_new = (waitTime+waitingStudents*2) / waitingStudents;
+	avgWaitTime_new = waitTime / waitingStudents + 2;
 	printf("Number of came studets  %d\n", allStudent);
 	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitTime_new);
@@ -109,13 +116,14 @@ void *TA(void *temp)
 		numOfChairs--; //CS
 
 		//signal => sem ++
-		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&TA_sem);		 // free TA
-
+		sem_post(&chairs_mutex); // unlock mutex
 		printf("%s\n", "TA starts teaching.");
 
 		//TA教學一次要2個單位時間
 		usleep(2000);
+		
+		
 	}
 }
 
@@ -132,11 +140,11 @@ void *Student(void *temp)
 		numOfChairs++;
 		//真的有等待學生的人 +1；
 		waitingStudents++;
-		sem_post(&chairs_mutex); // unlock mutex
 		sem_post(&student_sem);  // free student
+		sem_post(&chairs_mutex); // unlock mutex
 		sem_wait(&TA_sem);		 // wait for barber available
 		printf("%s\n", "Student come in LAB.");
-		sem_wait(&time_mutex); //lock time
+		sem_wait(&time_mutex); //lock waitTime
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
 		waitTime += numOfChairs; //增加這個人總等待的時間
 		sem_post(&time_mutex);
