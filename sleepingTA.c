@@ -151,12 +151,12 @@ void *Student(void *temp)
 		sem_wait(&timeMutex); //lock waitingTime
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
 		waitingTime += (numOfOccupiedChairs+1); //增加這個人總等待與進實驗教學的時間
-		//waitingTime += numOfOccupiedChairs;  
+		//waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
 		sem_post(&timeMutex);
 		usleep(1000);
 		sem_wait(&timeMutex);
 		waitingTime += (numOfOccupiedChairs+1); //增加這個人總等待與進實驗教學的時間
-		//waitingTime += numOfOccupiedChairs;  
+		//waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
 		sem_post(&timeMutex);
 		usleep(1000);
 		printf("%s\n", "Finish TA teaching, Student leave.");
