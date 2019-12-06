@@ -11,7 +11,7 @@
 ## 解決方法敘述
 為求每位有接受教學的學生在實驗室內外的平均時間
 
-每個學生在自己進去實驗室的被助教教學的2秒，每1秒去確認一次外面在等待的學生人數(`numberOfOccupiedChairs`)
+每個學生在自己進去實驗室的被助教教學的2單位時間，每1單位時間去確認一次外面在等待的學生人數(`numberOfOccupiedChairs`)
 
 => `waitingTime = waitingTime + numberOfOccupiedChairs`
 來算出每位學生在實驗室外等待的時間  
