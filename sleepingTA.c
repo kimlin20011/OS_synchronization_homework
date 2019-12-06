@@ -104,7 +104,7 @@ int main(void)
 
 	printf("Total waiting time = %lf\n\n", waitingTime);
 	//計算平均等待時間
-	avgWaitingTime = waitingTime / waitingStudents + 2;  //2表示進實驗室時，每位學生自己在實驗室中的時間(2秒)
+	avgWaitingTime = waitingTime / waitingStudents + 2;  //2表示進實驗室時，每位學生自己在實驗室中的時間(2單位時間)
 	printf("Number of came studets  %d\n", allStudents);
 	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitingTime);
