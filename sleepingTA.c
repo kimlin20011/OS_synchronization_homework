@@ -104,7 +104,7 @@ int main(void)
 
 	printf("Total waiting time = %lf\n\n", waitingTime);
 	//計算平均等待時間
-	avgWaitingTime = waitingTime / waitingStudents + 2;
+	avgWaitingTime = waitingTime / waitingStudents + 2;  //2表示進實驗室時，每位學生自己在實驗室中的時間(2秒)
 	printf("Number of came studets  %d\n", allStudents);
 	printf("Number of waiting studets  %d\n", waitingStudents);
 	printf("Avg waiting Time %lf\n", avgWaitingTime);
@@ -150,13 +150,11 @@ void *Student(void *temp)
 		printf("%s\n", "Student come in LAB.");
 		sem_wait(&timeMutex); //lock waitingTime
 		//每一秒前先確認外面等待學生的總量，也代表他們要等待多久
-		waitingTime += (numOfOccupiedChairs+1); //增加這個人總等待與進實驗教學的時間
-		//waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
+		waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
 		sem_post(&timeMutex);
 		usleep(1000);
 		sem_wait(&timeMutex);
-		waitingTime += (numOfOccupiedChairs+1); //增加這個人總等待與進實驗教學的時間
-		//waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
+		waitingTime += numOfOccupiedChairs;  //增加這個人實驗室外等待的時間
 		sem_post(&timeMutex);
 		usleep(1000);
 		printf("%s\n", "Finish TA teaching, Student leave.");
